@@ -8,11 +8,11 @@
 import Foundation
 
 enum EnterPoint {
-    case gitsList(page: Int, pageSize: Int)
+    case numlist(page: Int, pageSize: Int)
     
     var urlRequest: URLRequest {
         switch self {
-        case .gitsList(let page, let pageSize):
+        case .numlist(let page, let pageSize):
             let components = URLComponents(string: "https://webapi.autodoc.ru/api/news/\(page)/\(pageSize)")!
             var urlRequest = URLRequest(url: components.url!)
             urlRequest.httpMethod = "GET"

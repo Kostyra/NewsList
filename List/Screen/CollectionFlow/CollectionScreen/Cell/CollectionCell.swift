@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 final class CollectionViewCell: UICollectionViewCell {
     
@@ -43,6 +44,7 @@ final class CollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
     
     //MARK: - Method
     
@@ -60,7 +62,9 @@ final class CollectionViewCell: UICollectionViewCell {
         ])
     }
     
-    func configurationCellTable(with list: ListUIModel, isExpanded: Bool, updateTitleOnly: Bool = false) {
+    
+    
+    func configurationCellCollection(with list: ListUIModel, isExpanded: Bool, updateTitleOnly: Bool = false) {
         self.title.text = list.title
         self.title.numberOfLines = isExpanded ? 0 : 1
         if !updateTitleOnly {

@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  List
 //
-//  Created by Юлия Филиппова on 09.12.2024.
+//  Created by Kos on 09.12.2024.
 //
 
 import UIKit

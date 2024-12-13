@@ -1,15 +1,12 @@
 //
-//  TableViewCoordinator.swift
+//  CollectionViewCoordinator.swift
 //  List
 //
-//  Created by Юлия Филиппова on 09.12.2024.
+//  Created by Kos on 09.12.2024.
 //
 
 import UIKit
 
-protocol TableViewCoordinatorProtocol {
-    func tableViewCoordinatorDidFinish(gists: ListCodable)
-}
 
 
 final class CollectionViewCoordinator {
@@ -31,7 +28,7 @@ final class CollectionViewCoordinator {
     }
     
     deinit {
-        print("TableViewCoordinator delete")
+        print("CollectionViewCoordinator delete")
     }
     
     
@@ -42,8 +39,8 @@ final class CollectionViewCoordinator {
         let networkManager = CoreNetworkManager()
         let apiService = ListsApiService(mapper: coreMapper, networkManager: networkManager)
         let viewModel = CollectionViewModel(coordinator: self, apiService: apiService)
-        let tableViewController = CollectionViewController(viewModel: viewModel)
-        let navigationController = UINavigationController(rootViewController: tableViewController)
+        let collectionViewController = CollectionViewController(viewModel: viewModel)
+        let navigationController = UINavigationController(rootViewController: collectionViewController)
         self.navigationController = navigationController
         return navigationController
     }
@@ -73,15 +70,3 @@ extension CollectionViewCoordinator: CoordinatorProtocol {
     }
 }
 
-// MARK: - TableViewCoordinatorProtocol
-
-extension CollectionViewCoordinator: TableViewCoordinatorProtocol {
-    func tableViewCoordinatorDidFinish(gists: ListCodable) {
-//        let collectionViewCoordinator = CollectionViewCoordinator(parentCoordinator: self, selectedGist: gists)
-//        addChildCoordinator(collectionViewCoordinator)
-//        let collectionViewController = collectionViewCoordinator.start()
-//        self.pushChildViewController(collectionViewController)
-    }
-    
-    
-}

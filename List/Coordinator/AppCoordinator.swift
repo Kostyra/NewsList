@@ -28,13 +28,13 @@ final class AppCoordinator {
     //MARK: - Private methods
     
     
-    private func tableViewCoordinator() -> CoordinatorProtocol {
-        let tableViewCoordinator = CollectionViewCoordinator(parentCoordinator: self)
-        return tableViewCoordinator
+    private func collectionViewCoordinator() -> CoordinatorProtocol {
+        let collectionViewCoordinator = CollectionViewCoordinator(parentCoordinator: self)
+        return collectionViewCoordinator
     }
     
-    private func showTableViewScreen() -> UIViewController {
-        let coordinator = tableViewCoordinator()
+    private func showCollectionViewScreen() -> UIViewController {
+        let coordinator = collectionViewCoordinator()
         addChildCoordinator(coordinator)
         setFlow(to: coordinator.start())
         return rootViewController
@@ -91,7 +91,7 @@ final class AppCoordinator {
 
 extension AppCoordinator: CoordinatorProtocol {
     func start() -> UIViewController {
-        showTableViewScreen()
+        showCollectionViewScreen()
     }
 }
 

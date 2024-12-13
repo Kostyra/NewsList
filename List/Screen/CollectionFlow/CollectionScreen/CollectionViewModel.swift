@@ -5,92 +5,152 @@
 //  Created by Kos on 09.12.2024.
 //
 
-import Foundation
+//import Foundation
+//import Combine
+//
+//// MARK: - CollectionViewModelProtocol
+//protocol CollectionViewModelProtocol {
+//    var stateDidChange: ((CollectionViewModel.State) -> Void)? { get set }
+//    func getList()
+//    func loadNextPage()
+//}
+//
+//final class CollectionViewModel {
+//    enum State {
+//        case loading
+//        case done(lists: [ListUIModel])
+//        case error(error: String)
+//    }
+//
+//    private weak var coordinator: CollectionViewCoordinator?
+//    private let apiService: ListsApiServiceProtocol
+//    private var lists: [ListUIModel] = []
+//    private var pageSize = 15
+//    private var currentPage = 1
+//    private var cancellables = Set<AnyCancellable>()
+//
+//    var stateDidChange: ((State) -> Void)?
+//    var state: State = .loading {
+//        didSet {
+//            self.stateDidChange?(state)
+//        }
+//    }
+//
+//    init(coordinator: CollectionViewCoordinator, apiService: ListsApiServiceProtocol) {
+//        self.coordinator = coordinator
+//        self.apiService = apiService
+//    }
+//
+//    func getLists(page: Int) {
+//        state = .loading
+//        apiService.getLists(page: page, pageSize: pageSize)
+//            .receive(on: DispatchQueue.main)
+//            .sink(receiveCompletion: { [weak self] completion in
+//                guard let self = self else { return }
+//                switch completion {
+//                case .failure(let error):
+//                    self.state = .error(error: error.localizedDescription)
+//                case .finished:
+//                    break
+//                }
+//            }, receiveValue: { [weak self] newLists in
+//                guard let self = self else { return }
+//                if page == 1 {
+//                    self.lists = newLists
+//                } else {
+//                    self.lists.append(contentsOf: newLists)
+//                }
+//                self.state = .done(lists: self.lists)
+//            })
+//            .store(in: &cancellables)
+//    }
+//
+//    func loadNextPage() {
+//        currentPage += 1
+//        getLists(page: currentPage)
+//    }
+//}
+//
+//extension CollectionViewModel: CollectionViewModelProtocol {
+//    func getList() {
+//        currentPage = 1
+//        getLists(page: currentPage)
+//    }
+//}
 
+
+import Foundation
+import Combine
+
+// MARK: - CollectionViewModelProtocol
 protocol CollectionViewModelProtocol {
-    var stateDidChange: ((CollectionViewModel.State) -> Void)? { get set }
-    var isLoading:Bool { get }
+    var statePublisher: Published<CollectionViewModel.State>.Publisher { get }
+    var isLoadingNextPage: Bool { get }
     func getList()
     func loadNextPage()
 }
 
-
-final class CollectionViewModel {
-    
-    //MARK: - Enum
-    
+final class CollectionViewModel: ObservableObject {
     enum State {
         case loading
         case done(lists: [ListUIModel])
         case error(error: String)
     }
+
     
-    //MARK: - properties
-    
+    var isLoadingNextPage = false 
     private weak var coordinator: CollectionViewCoordinator?
-    private let apiService: ListsApiService
+    private let apiService: ListsApiServiceProtocol
     private var lists: [ListUIModel] = []
     private var pageSize = 15
     private var currentPage = 1
-    var isLoading = false
-    
-    var stateDidChange:((State) -> Void)?
-    var state: State = .loading {
-        didSet {
-            self.stateDidChange?(state)
-        }
-    }
-    
-    
-    //MARK: - Initialise
-    
-    init(coordinator: CollectionViewCoordinator, apiService: ListsApiService) {
+    private var cancellables = Set<AnyCancellable>()
+
+    @Published private(set) var state: State = .loading
+
+    var statePublisher: Published<State>.Publisher { $state }
+
+    init(coordinator: CollectionViewCoordinator, apiService: ListsApiServiceProtocol) {
         self.coordinator = coordinator
         self.apiService = apiService
     }
-    
-    deinit {
-        print("TableModel \(#function)")
-        
-    }
-    
-    //MARK: - Method
-    
-    func getLists(page: Int) {
-        guard !isLoading else { return }
-        isLoading = true
-        stateDidChange?(.loading)
-        
-        Task { @MainActor [weak self] in
-            guard let self = self else { return }
-            do {
-                let newLists = try await apiService.getLists(page: page, pageSize: pageSize)
+
+    private func getLists(page: Int) {
+        state = .loading
+        apiService.getLists(page: page, pageSize: pageSize)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completion in
+                guard let self = self else { return }
+                switch completion {
+                case .failure(let error):
+                    self.state = .error(error: error.localizedDescription)
+                    self.isLoadingNextPage = false
+                case .finished:
+                    break
+                }
+            }, receiveValue: { [weak self] newLists in
+                guard let self = self else { return }
                 if page == 1 {
                     self.lists = newLists
                 } else {
                     self.lists.append(contentsOf: newLists)
                 }
                 self.state = .done(lists: self.lists)
-                self.isLoading = false
-            } catch {
-                self.state = .error(error: error.localizedDescription)
-                self.isLoading = false
-            }
-        }
+                self.isLoadingNextPage = false
+            })
+            .store(in: &cancellables)
     }
-    
+
     func loadNextPage() {
-        guard !isLoading else { return }
-        currentPage += 1
-        getLists(page: currentPage)
-    }
+         guard !isLoadingNextPage else { return }
+         isLoadingNextPage = true
+         currentPage += 1
+         getLists(page: currentPage)
+     }
 }
 
-//MARK: - extension CollectionViewModel
-
-
+// MARK: - CollectionViewModelProtocol Implementation
 extension CollectionViewModel: CollectionViewModelProtocol {
-
     func getList() {
         currentPage = 1
         getLists(page: currentPage)
