@@ -19,6 +19,8 @@ struct ListUIModel: Hashable {
     }
 }
 
+// MARK: - Extension
+
 extension ListUIModel {
     init(list: ListCodable) {
         self.title = list.title

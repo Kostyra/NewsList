@@ -62,8 +62,6 @@ final class CollectionViewCell: UICollectionViewCell {
         ])
     }
     
-    
-    
     func configurationCellCollection(with list: ListUIModel, isExpanded: Bool, updateTitleOnly: Bool = false) {
         self.title.text = list.title
         self.title.numberOfLines = isExpanded ? 0 : 1

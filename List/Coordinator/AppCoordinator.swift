@@ -88,7 +88,6 @@ final class AppCoordinator {
 
 //MARK: - extension CoordinatorProtocol
 
-
 extension AppCoordinator: CoordinatorProtocol {
     func start() -> UIViewController {
         showCollectionViewScreen()

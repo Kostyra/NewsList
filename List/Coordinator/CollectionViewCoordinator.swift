@@ -7,10 +7,7 @@
 
 import UIKit
 
-
-
 final class CollectionViewCoordinator {
-    
     
     // MARK: - Properties
     
@@ -19,9 +16,7 @@ final class CollectionViewCoordinator {
     private var rootViewController: UIViewController?
     private var childCoordinators: [CoordinatorProtocol] = []
     
-    
     //MARK: - Initialise
-    
     
     init(parentCoordinator: AppCoordinator?) {
         self.parentCoordinator = parentCoordinator
@@ -31,8 +26,7 @@ final class CollectionViewCoordinator {
         print("CollectionViewCoordinator delete")
     }
     
-    
-    // MARK: - Methods
+    //MARK: - Methods
     
     private func createNavigationController() -> UIViewController {
         let coreMapper = CoreMapper()

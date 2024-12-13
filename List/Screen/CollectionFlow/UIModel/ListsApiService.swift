@@ -5,40 +5,6 @@
 //  Created by Kos on 09.12.2024.
 //
 
-//import Foundation
-//
-//protocol ListsApiServiceProtocol {
-//    func getLists(page: Int, pageSize: Int) async throws -> [ListUIModel]
-//}
-//
-//
-//final class ListsApiService {
-//    
-//    //MARK: - Properties
-//    
-//    private let mapper: CoreMapperProtocol
-//    private let networkManager: CoreNetworkManager
-//    
-//    //MARK: - Life cycle
-//    
-//    init(mapper: CoreMapperProtocol, networkManager: CoreNetworkManager) {
-//        self.mapper = mapper
-//        self.networkManager = networkManager
-//    }
-//}
-//
-////MARK: - extension ListsApiService
-//
-//extension ListsApiService: ListsApiServiceProtocol {
-//    func getLists(page: Int, pageSize: Int ) async throws -> [ListUIModel] {
-//        let endpoint = EnterPoint.numlist(page: page, pageSize: pageSize)
-//        let data = try await networkManager.getRequest(enterPoint: endpoint)
-//        let newsResponse = try await mapper.map(from: data, jsonType: NewsResponse.self)
-//        let lists = newsResponse.news
-//        return lists.map { ListUIModel(list: $0) }
-//    }
-//}
-
 import Foundation
 import Combine
 
@@ -57,6 +23,7 @@ final class ListsApiService {
     }
 }
 
+// MARK: - Extension ListsApiService
 extension ListsApiService: ListsApiServiceProtocol {
     func getLists(page: Int, pageSize: Int) -> AnyPublisher<[ListUIModel], Error> {
         let endpoint = EnterPoint.numlist(page: page, pageSize: pageSize)
